@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our First Memories</title>
+  <style>
+    :root {
+      --bg-a: #ffe9f1;
+      --bg-b: #ffd7e5;
+      --card: #fff8fb;
+      --text: #7a2444;
+      --line: #ffc7da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(165deg, var(--bg-a), var(--bg-b));
+      overflow-x: hidden;
+    }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      top: -10vh;
+      color: #ff5f93;
+      animation-name: fall, sway;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: infinite, infinite;
+    }
+
+    .heart::before {
+      content: "\2665";
+      font-size: inherit;
+      line-height: 1;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-12vh);
+      }
+      to {
+        transform: translateY(112vh);
+      }
+    }
+
+    @keyframes sway {
+      0% {
+        margin-left: -8px;
+      }
+      50% {
+        margin-left: 8px;
+      }
+      100% {
+        margin-left: -8px;
+      }
+    }
+
+    .memories {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: clamp(18px, 4vw, 44px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+
+    .memory-card {
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(180, 65, 106, 0.14);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .memory-card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .memory-card input[type="file"] {
+      width: 100%;
+    }
+
+    .memory-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit:scale-down;
+      border-radius: 12px;
+      border: 2px solid #ffd8e5;
+      background: #fff;
+    }
+
+    .memory-desc {
+      margin: 0;
+      line-height: 1.45;
+      font-size: 0.97rem;
+    }
+
+    .memory-card textarea {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      border: 2px solid #ffd8e5;
+      border-radius: 12px;
+      padding: 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .memory-card textarea:focus {
+      outline: none;
+      border-color: #ff8db4;
+      box-shadow: 0 0 0 3px rgba(255, 141, 180, 0.2);
+    }
+
+    .letter-section {
+      width: min(920px, 100%);
+      margin: 8px auto 0;
+      padding: 6px 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .letter-title {
+      margin: 0;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+      text-align: center;
+    }
+
+    .paper-stack {
+      position: relative;
+      width: min(740px, 100%);
+      padding: 18px;
+    }
+
+    .paper-stack::before,
+    .paper-stack::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background: #ffd9e8;
+      z-index: 0;
+      box-shadow: 0 10px 20px rgba(130, 36, 74, 0.14);
+    }
+
+    .paper-stack::before {
+      transform: rotate(-2.2deg);
+    }
+
+    .paper-stack::after {
+      transform: rotate(1.4deg);
+      background: #ffc8dd;
+    }
+
+    .letter-paper {
+      position: relative;
+      z-index: 1;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 30px,
+          rgba(255, 173, 205, 0.28) 30px,
+          rgba(255, 173, 205, 0.28) 31px
+        ) border-box;
+      border: 2px solid #ffd3e3;
+      border-radius: 12px;
+      padding: clamp(16px, 3vw, 28px);
+      box-shadow: 0 12px 28px rgba(122, 36, 68, 0.2);
+    }
+
+    .letter-paper p {
+      margin: 0 0 12px;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    .letter-sign {
+      margin: 8px 0 0;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .music-section {
+      width: min(920px, 100%);
+      margin: 4px auto 0;
+      padding: 10px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .music-title {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+    }
+
+    .playlist {
+      background: #fff7fb;
+      color: var(--text);
+      border-radius: 18px;
+      padding: clamp(14px, 3vw, 22px);
+      box-shadow: 0 14px 30px rgba(122, 36, 68, 0.18);
+      border: 2px solid #ffd0e1;
+      display: grid;
+      gap: 12px;
+    }
+
+    .track {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #ffd5e4;
+      display: grid;
+      gap: 9px;
+    }
+
+    .track-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .track-name {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #7a2444;
+    }
+
+    .track-artist {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #a35a77;
+    }
+
+    .track-time {
+      font-size: 0.83rem;
+      color: #9b4c6b;
+      white-space: nowrap;
+    }
+
+    .track-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .play-btn {
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff6fa5, #ff478a);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 7px 12px;
+      cursor: pointer;
+      min-width: 66px;
+    }
+
+    .track audio {
+      width: 100%;
+      height: 30px;
+      border-radius: 8px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #ffd9e8;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ff6fa5, #ff4d88);
+    }
+
+    .ideas-section {
+      width: min(980px, 100%);
+      margin: 4px auto 10px;
+      padding: 10px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ideas-title {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+    }
+
+    .ideas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .idea-card {
+      background: #fff7fb;
+      border: 2px solid #ffd2e2;
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+      font-weight: 700;
+      color: #7a2444;
+      box-shadow: 0 8px 16px rgba(122, 36, 68, 0.1);
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .love-section {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 6px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-title {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+    }
+
+    .love-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .love-card {
+      background: #fff7fb;
+      border: 2px solid #ffd0e1;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 9px 18px rgba(122, 36, 68, 0.1);
+      display: grid;
+      gap: 4px;
+    }
+
+    .love-card strong {
+      color: #8a2a4f;
+      font-size: 0.95rem;
+    }
+
+    .love-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #8f4b68;
+    }
+
+    .timeline-section {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 6px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .timeline {
+      background: #fff7fb;
+      border: 2px solid #ffd0e1;
+      border-radius: 16px;
+      padding: clamp(12px, 2.8vw, 18px);
+      box-shadow: 0 12px 24px rgba(122, 36, 68, 0.12);
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item {
+      position: relative;
+      background: #fff;
+      border: 1px solid #ffd8e5;
+      border-radius: 12px;
+      padding: 10px 12px 10px 16px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 5px;
+      border-radius: 999px;
+      background: linear-gradient(#ff94bb, #ff5b95);
+    }
+
+    .timeline-item h3 {
+      margin: 0 0 3px;
+      font-size: 0.95rem;
+      color: #7a2444;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: #965270;
+      line-height: 1.4;
+    }
+
+    .surprise-section {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      padding: 6px 0 10px;
+      display: grid;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .surprise-btn {
+      justify-self: center;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(90deg, #ff6fa5, #ff478a);
+      box-shadow: 0 10px 18px rgba(155, 43, 88, 0.28);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .surprise-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 22px rgba(155, 43, 88, 0.34);
+    }
+
+    .surprise-panel {
+      display: none;
+      background: #fff;
+      border: 2px solid #ffd2e2;
+      border-radius: 16px;
+      padding: clamp(14px, 3vw, 22px);
+      box-shadow: 0 12px 24px rgba(122, 36, 68, 0.15);
+      text-align: left;
+    }
+
+    .surprise-panel.show {
+      display: block;
+    }
+
+    .surprise-panel h3 {
+      margin: 0 0 8px;
+      color: #7a2444;
+      font-size: 1.12rem;
+    }
+
+    .surprise-panel p {
+      margin: 0 0 10px;
+      color: #90506d;
+      line-height: 1.6;
+    }
+
+    .close-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .close-btn {
+      border: 1px solid #ffc5d9;
+      background: #fff5fa;
+      color: #7a2444;
+      border-radius: 10px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <section class="memories">
+    <h1>Our First Memories</h1>
+
+    <div class="memory-grid">
+      <article class="memory-card">
+        <h2>Memory 1</h2>
+        <img class="memory-photo" src="mem1.jpeg" alt="Memory 1 photo">
+        <p class="memory-desc">Uss din tere chotu se cute shivling ne merko janmo-janmo ke lie book kar lia</p>
+      </article>
+
+      <article class="memory-card">
+        <h2>Memory 2</h2>
+        <img class="memory-photo" src="mem2.jpeg" alt="Memory 2 photo">
+        <p class="memory-desc">maybe uss time tu merko itna pasand ni krti thi ; but isi din ne humare relationship ki strong foundation di thi <br> Haye vo tera straight-forward Proposal</p>
+      </article>
+
+      <article class="memory-card">
+        <h2>Memory 3</h2>
+        <img class="memory-photo" src="mem3.jpeg" alt="Memory 3 photo">
+        <p class="memory-desc">Teri first photo mere phone se. isi place pe tere aage apne saare dukh sunake roya tha mein aur fir bhi tune apnaya merko!</p>
+      </article>
+
+      <article class="memory-card">
+        <h2>Memory 4</h2>
+        <img class="memory-photo" src="mem4'.jpeg" alt="Memory 4 photo">
+        <p class="memory-desc">kitniiii haan-na haan-na ke baad hum dono ye pal chura ppae thi ek-dusre ki life se <br> Cutest date ever!!</p>
+      </article>
+    </div>
+
+    <div class="letter-section">
+      <h2 class="letter-title">Special Letter For You</h2>
+      <div class="paper-stack">
+        <article class="letter-paper">
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi dolorum cumque qui libero esse exercitationem at molestiae atque distinctio! Voluptatem dolorum veritatis ipsum pariatur provident corporis ab et aliquid sint? Ad adipisci quod facilis temporibus, illum reprehenderit repellendus fugit aperiam explicabo enim, eum hic consequuntur eos, obcaecati tempore laborum beatae nam! Id corrupti veniam accusantium eos quisquam eum rerum! Totam temporibus architecto molestias nostrum amet eaque velit! Dolorem obcaecati laboriosam quam deserunt incidunt minima fuga tempora neque cumque adipisci dolorum sapiente consequuntur voluptatum nesciunt, minus et ullam ratione eum ex, earum cupiditate? Facere, voluptatum aut ratione ex aliquid laudantium inventore.
+          </p>
+          <p>
+            No matter where we go, my happiest place is always right next to you.
+          </p>
+          <p class="letter-sign">Forever yours,</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="music-section">
+      <h2 class="music-title">Music Special For Us</h2>
+      <div class="playlist">
+        <article class="track">
+          <div class="track-top">
+            <div>
+              <p class="track-name">Tere Naal Jind</p>
+              <p class="track-artist">Sinta Bhai</p>
+            </div>
+            <span class="track-time"><span class="track-current">0:00</span> / <span class="track-total">0:00</span></span>
+          </div>
+          <div class="track-controls">
+            <button class="play-btn" type="button">Play</button>
+            <audio preload="metadata" src="terenaal.mpeg"></audio>
+          </div>
+          <div class="progress"><span style="width: 0%;"></span></div>
+        </article>
+
+        <article class="track">
+          <div class="track-top">
+            <div>
+              <p class="track-name">Haan Ke Haan</p>
+              <p class="track-artist">Monali Thakur</p>
+            </div>
+            <span class="track-time"><span class="track-current">0:00</span> / <span class="track-total">0:00</span></span>
+          </div>
+          <div class="track-controls">
+            <button class="play-btn" type="button">Play</button>
+            <audio preload="metadata" src="hhankehhan.mpeg"></audio>
+          </div>
+          <div class="progress"><span style="width: 0%;"></span></div>
+        </article>
+
+        <article class="track">
+          <div class="track-top">
+            <div>
+              <p class="track-name">Pal Pal Dil ke Pass</p>
+              <p class="track-artist">Kishore Kumar</p>
+            </div>
+            <span class="track-time"><span class="track-current">0:00</span> / <span class="track-total">0:00</span></span>
+          </div>
+          <div class="track-controls">
+            <button class="play-btn" type="button">Play</button>
+            <audio preload="metadata" src="palpal.mpeg"></audio>
+          </div>
+          <div class="progress"><span style="width: 0%;"></span></div>
+        </article>
+
+        <article class="track">
+          <div class="track-top">
+            <div>
+              <p class="track-name">Neher Wale pul te bulake</p>
+              <p class="track-artist">Noor Jehan</p>
+            </div>
+            <span class="track-time"><span class="track-current">0:00</span> / <span class="track-total">0:00</span></span>
+          </div>
+          <div class="track-controls">
+            <button class="play-btn" type="button">Play</button>
+            <audio preload="metadata" src="neherwalepul.mpeg"></audio>
+          </div>
+          <div class="progress"><span style="width: 0%;"></span></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="ideas-section">
+      <h2 class="ideas-title">Date Ideas</h2>
+      <div class="ideas-grid">
+        <div class="idea-card">Lake waale jhule pe chai ki chuski</div>
+        <div class="idea-card">Library mein romantic movie</div>
+        <div class="idea-card">ek dusre ke lie kapde kharidna</div>
+        <div class="idea-card">Read Shree Krishna Book</div>
+        <div class="idea-card">Picnic in Sheik Chilii</div>
+        <div class="idea-card">Kurkure-chips chaat Party</div>
+        <div class="idea-card">Puura Kurukshetra Ghumna aur photoshoot</div>
+        <div class="idea-card">Video Games with pizza</div>
+        <div class="idea-card">Sunset at BrahmSarovar</div>
+        <div class="idea-card">Full Night Videocall</div>
+      </div>
+    </div>
+
+    <div class="love-section">
+      <h2 class="section-title">Why I Love You</h2>
+      <div class="love-grid">
+        <article class="love-card"><strong>1. Your Smile</strong><p>Esa lagta hai duniya ka sabse bada khazana hai mere paas</p></article>
+        <article class="love-card"><strong>2. Your Kindness</strong><p>You care deeply about everyone around you.</p></article>
+        <article class="love-card"><strong>3. Your Laugh</strong><p>It is my favorite sound, every single time.</p></article>
+        <article class="love-card"><strong>4. Your Support</strong><p>Tu ek baar bol de mein hu tere saath to duniya ka hard se hard kaam easy ban jaata hai.</p></article>
+        <article class="love-card"><strong>5. Your Heart</strong><p>I know bohot baar logo ne toda h ise ; isiliye aur Jyada care ke saath protection krna chahta hu </p></article>
+        <article class="love-card"><strong>6. Your Energy</strong><p>Mein bss tere energy ko duniy se chupa ke rakhna chahta hu taki koi bhi ise change na kr pae</p></article>
+        <article class="love-card"><strong>7. Your Patience</strong><p>Itne pagal aadmi ke tantrims hr din uthana; har koi ni kr sakta</p></article>
+        <article class="love-card"><strong>8. Just You</strong><p>Tere saath hota hu to vulnerable ho pata hu. Its safe for my feelings</p></article>
+      </div>
+    </div>
+
+    <div class="timeline-section">
+      <h2 class="section-title">Our Timeline</h2>
+      <div class="timeline">
+        <article class="timeline-item">
+          <h3>First Chat</h3>
+          <p>The conversation that started everything between us.</p>
+        </article>
+        <article class="timeline-item">
+          <h3>First Call</h3>
+          <p>We talked for hours and forgot about the time.</p>
+        </article>
+        <article class="timeline-item">
+          <h3>First Date</h3>
+          <p>Nervous smiles, great food, and an unforgettable evening.</p>
+        </article>
+        <article class="timeline-item">
+          <h3>First Celebration</h3>
+          <p>The day we promised to make more memories together.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="surprise-section">
+      <h2 class="section-title">Final Surprise</h2>
+      <button id="surpriseBtn" class="surprise-btn" type="button">Open My Secret Message</button>
+      <article id="surprisePanel" class="surprise-panel">
+        <h3>For You, Always</h3>
+        <p>
+          If I could choose one place forever, it would be wherever you are.
+          Thank you for your love, your patience, and your beautiful heart.
+        </p>
+        <p>
+          This page is just a small reminder that you are my favorite part of every day.
+        </p>
+        <div class="close-row">
+          <button id="closeSurpriseBtn" class="close-btn" type="button">Close</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <script>
+    const heartsLayer = document.getElementById("hearts");
+    const surpriseBtn = document.getElementById("surpriseBtn");
+    const surprisePanel = document.getElementById("surprisePanel");
+    const closeSurpriseBtn = document.getElementById("closeSurpriseBtn");
+    const tracks = Array.from(document.querySelectorAll(".track"));
+
+    function createFallingHearts(count) {
+      for (let i = 0; i < count; i += 1) {
+        const heart = document.createElement("span");
+        const size = 12 + Math.random() * 24;
+        const left = Math.random() * 100;
+        const fallDuration = 6 + Math.random() * 6;
+        const swayDuration = 2 + Math.random() * 2;
+        const delay = Math.random() * 6;
+        const opacity = 0.3 + Math.random() * 0.55;
+
+        heart.className = "heart";
+        heart.style.left = `${left}vw`;
+        heart.style.fontSize = `${size}px`;
+        heart.style.opacity = `${opacity}`;
+        heart.style.animationDuration = `${fallDuration}s, ${swayDuration}s`;
+        heart.style.animationDelay = `${delay}s, ${delay}s`;
+
+        heartsLayer.appendChild(heart);
+      }
+    }
+
+    createFallingHearts(28);
+
+    surpriseBtn.addEventListener("click", () => {
+      surprisePanel.classList.add("show");
+      surpriseBtn.style.display = "none";
+    });
+
+    closeSurpriseBtn.addEventListener("click", () => {
+      surprisePanel.classList.remove("show");
+      surpriseBtn.style.display = "inline-block";
+    });
+
+    function formatTime(value) {
+      if (!Number.isFinite(value)) {
+        return "0:00";
+      }
+      const mins = Math.floor(value / 60);
+      const secs = Math.floor(value % 60);
+      return `${mins}:${String(secs).padStart(2, "0")}`;
+    }
+
+    tracks.forEach((track) => {
+      const audio = track.querySelector("audio");
+      const playBtn = track.querySelector(".play-btn");
+      const current = track.querySelector(".track-current");
+      const total = track.querySelector(".track-total");
+      const bar = track.querySelector(".progress > span");
+
+      audio.addEventListener("loadedmetadata", () => {
+        total.textContent = formatTime(audio.duration);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        current.textContent = formatTime(audio.currentTime);
+        if (audio.duration > 0) {
+          bar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+        }
+      });
+
+      audio.addEventListener("ended", () => {
+        playBtn.textContent = "Play";
+      });
+
+      playBtn.addEventListener("click", () => {
+        const isPlaying = !audio.paused;
+
+        tracks.forEach((item) => {
+          const otherAudio = item.querySelector("audio");
+          const otherBtn = item.querySelector(".play-btn");
+          if (otherAudio !== audio) {
+            otherAudio.pause();
+            otherBtn.textContent = "Play";
+          }
+        });
+
+        if (isPlaying) {
+          audio.pause();
+          playBtn.textContent = "Play";
+        } else {
+          audio.play();
+          playBtn.textContent = "Pause";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

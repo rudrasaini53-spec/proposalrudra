@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Be My Valentine?</title>
+  <style>
+    :root {
+      --bg-a: #ffe6ee;
+      --bg-b: #ffd1de;
+      --card: #fff7fb;
+      --text: #7a2444;
+      --yes: #ff4d88;
+      --yes-hover: #ff2f73;
+      --no: #ffb6cc;
+      --no-text: #7a2444;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, var(--bg-a), var(--bg-b));
+      color: var(--text);
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      top: -10vh;
+      color: #ff5f93;
+      animation-name: fall, sway;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: infinite, infinite;
+    }
+
+    .heart::before {
+      content: "\2665";
+      font-size: inherit;
+      line-height: 1;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-12vh);
+      }
+      to {
+        transform: translateY(112vh);
+      }
+    }
+
+    @keyframes sway {
+      0% {
+        margin-left: -8px;
+      }
+      50% {
+        margin-left: 8px;
+      }
+      100% {
+        margin-left: -8px;
+      }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 440px);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 28px 24px 30px;
+      text-align: center;
+      box-shadow: 0 14px 40px rgba(180, 65, 106, 0.2);
+      border: 2px solid #ffd8e5;
+    }
+
+    .cute-gif {
+      width: 180px;
+      max-width: 70%;
+      border-radius: 16px;
+      margin-bottom: 14px;
+    }
+
+    .gif-wrap {
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+      line-height: 1.2;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 180ms ease, background-color 180ms ease, opacity 180ms ease;
+    }
+
+    #yesBtn {
+      background: var(--yes);
+      color: #fff;
+      transform-origin: center;
+    }
+
+    #yesBtn:hover {
+      background: var(--yes-hover);
+    }
+
+    #noBtn {
+      background: var(--no);
+      color: var(--no-text);
+      transform-origin: center;
+    }
+
+    .message {
+      margin-top: 16px;
+      font-size: 1.05rem;
+      min-height: 1.4em;
+      font-weight: 600;
+    }
+
+    .plan-link {
+      display: none;
+      margin-top: 8px;
+      background: #fff;
+      color: var(--text);
+      border: 2px solid #ffc6d9;
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+    }
+
+    .plan-link:hover {
+      background: #fff0f6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(180, 65, 106, 0.22);
+    }
+
+    .plan-link:active {
+      transform: translateY(0);
+    }
+
+    .plan-link:focus-visible {
+      outline: 3px solid #ff8db4;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <div class="card">
+    <div class="gif-wrap" id="gifWrap">
+      <div class="tenor-gif-embed" data-postid="4013167120558620298" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/bubu-dudu-heart-gif-4013167120558620298">Bubu Dudu Heart Sticker</a>from <a href="https://tenor.com/search/bubu+dudu+heart-stickers">Bubu Dudu Heart Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+    </div>
+    <h1>Will you be my Valentine?</h1>
+
+    <div class="buttons">
+      <button id="yesBtn" type="button">Yes</button>
+      <button id="noBtn" type="button">No</button>
+    </div>
+
+    <p id="message" class="message"></p>
+    <a id="planLink" class="plan-link" href="date-plan.html">Our Memory Lane</a>
+  </div>
+
+  <script>
+    const heartsLayer = document.getElementById("hearts");
+    const gifWrap = document.getElementById("gifWrap");
+    const buttonRow = document.querySelector(".buttons");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const message = document.getElementById("message");
+    const planLink = document.getElementById("planLink");
+
+    let yesScale = 1;
+    let noScale = 1;
+
+    noBtn.addEventListener("click", () => {
+      yesScale = Math.min(yesScale + 0.2, 2.8);
+      noScale = Math.max(noScale - 0.12, 0.2);
+
+      yesBtn.style.transform = `scale(${yesScale})`;
+      noBtn.style.transform = `scale(${noScale})`;
+
+      if (noScale <= 0.26) {
+        noBtn.style.opacity = "0.45";
+      }
+    });
+
+    function ensureTenorScript() {
+      if (document.querySelector('script[src="https://tenor.com/embed.js"]')) {
+        if (window.TenorEmbed && typeof window.TenorEmbed.loadEmbeds === "function") {
+          window.TenorEmbed.loadEmbeds();
+        }
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://tenor.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    yesBtn.addEventListener("click", () => {
+      message.textContent = "Yayyy! I love you so much!";
+      gifWrap.innerHTML = '<div class="tenor-gif-embed" data-postid="13779096733021884000" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/dudu-hug-bubu-dudu-kiss-dudu-love-gif-13779096733021884000">Dudu Hug Bubu Dudu Kiss Sticker</a>from <a href="https://tenor.com/search/dudu+hug+bubu-stickers">Dudu Hug Bubu Stickers</a></div>';
+      ensureTenorScript();
+      buttonRow.style.display = "none";
+      planLink.style.display = "inline-block";
+    });
+
+    function createFallingHearts(count) {
+      for (let i = 0; i < count; i += 1) {
+        const heart = document.createElement("span");
+        const size = 12 + Math.random() * 24;
+        const left = Math.random() * 100;
+        const fallDuration = 6 + Math.random() * 6;
+        const swayDuration = 2 + Math.random() * 2;
+        const delay = Math.random() * 6;
+        const opacity = 0.3 + Math.random() * 0.55;
+
+        heart.className = "heart";
+        heart.style.left = `${left}vw`;
+        heart.style.fontSize = `${size}px`;
+        heart.style.opacity = `${opacity}`;
+        heart.style.animationDuration = `${fallDuration}s, ${swayDuration}s`;
+        heart.style.animationDelay = `${delay}s, ${delay}s`;
+
+        heartsLayer.appendChild(heart);
+      }
+    }
+
+    createFallingHearts(28);
+  </script>
+</body>
+</html>
